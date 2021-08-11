@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+
+  cm-db:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=mariadb
+      - MYSQL_USER=cm
+      - MYSQL_PASSWORD=cm
+      - MYSQL_DATABASE=cm
+    ports:
+      - 33306:3306
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8088:8080
