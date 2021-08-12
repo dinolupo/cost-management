@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.BeanUtils;
 
+import javax.persistence.OptimisticLockException;
 import java.util.Optional;
 
 @RestController
@@ -49,19 +50,26 @@ public class ProjectController {
     ResponseEntity<EntityModel<Project>> replace(@RequestBody Project newElement, @PathVariable Long id) {
 
         Optional<Project> optProject = repository.findById(id);
-        if (optProject.isPresent()) { // found, updating entity
-            var current = optProject.get();
-            BeanUtils.copyProperties(newElement, current, "id");
-            var ent = repository.save(current);
-            var entityModel = assembler.toModel(ent);
-            return ResponseEntity.ok(entityModel);
-        } else { // not found, creating new entity with id
-            newElement.setId(id);
-            var ent = repository.save(newElement);
-            var entityModel = assembler.toModel(ent);
-            return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                    .body(entityModel);
+
+        if (optProject.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+
+        var current = optProject.get();
+        // check versioning
+        if (newElement.getVersion() == null || current.getVersion() != newElement.getVersion()) {
+            String message = String.format("Version is null or different for project id=%d, current db version=%d, new version=%d"
+                    , id
+                    , current.getVersion()
+                    , newElement.getVersion());
+            throw new OptimisticLockException(message);
+        }
+
+        BeanUtils.copyProperties(newElement, current, "id");
+        var ent = repository.save(current);
+        var entityModel = assembler.toModel(ent);
+        return ResponseEntity.ok(entityModel);
+
     }
 
     @DeleteMapping("/projects/{id}")
