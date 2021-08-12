@@ -7,7 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.mediatype.problem.Problem;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.BeanUtils;
@@ -35,9 +40,63 @@ public class ProjectController {
 
     @PostMapping(path = "/projects")
     ResponseEntity<EntityModel<Project>> newElement(@RequestBody Project newProject) {
+        if (newProject.getStatus() == null) {
+            newProject.setStatus(Project.Status.READY);
+        }
+        newProject.setArchived(false);
         var entityModel = assembler.toModel(repository.save(newProject));
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
+    }
+
+    @PutMapping("/projects/{id}/archive")
+    ResponseEntity<?> archive(@PathVariable Long id) {
+        Optional<Project> optProject = repository.findById(id);
+
+        if (optProject.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var project = optProject.get();
+
+        // if ok save
+        if (project.getStatus() == Project.Status.CANCELLED || project.getStatus() == Project.Status.COMPLETED) {
+            project.setArchived(true);
+            return ResponseEntity.ok(assembler.toModel(repository.save(project)));
+        }
+
+        // else return an error
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .body(Problem.create()
+                        .withTitle("Method not allowed")
+                        .withDetail("You can't archive a Project that is in the " + project.getStatus() + " status"));
+    }
+
+    @PutMapping("/projects/{id}/unarchive")
+    ResponseEntity<?> unarchive(@PathVariable Long id) {
+        Optional<Project> optProject = repository.findById(id);
+
+        if (optProject.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var project = optProject.get();
+
+        // if ok save
+        if (project.getArchived()) {
+            project.setArchived(false);
+            return ResponseEntity.ok(assembler.toModel(repository.save(project)));
+        }
+
+        // else return an error
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .body(Problem.create()
+                        .withTitle("Method not allowed")
+                        .withDetail("You can't unarchive a Project that is already online"));
     }
 
     @GetMapping("/projects/{id}")
@@ -65,7 +124,8 @@ public class ProjectController {
             throw new OptimisticLockException(message);
         }
 
-        BeanUtils.copyProperties(newElement, current, "id");
+        // id and archived attributes cannot be changed
+        BeanUtils.copyProperties(newElement, current, "id", "archived");
         var ent = repository.save(current);
         var entityModel = assembler.toModel(ent);
         return ResponseEntity.ok(entityModel);

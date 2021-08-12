@@ -6,6 +6,17 @@ import java.time.LocalDate;
 @Table(name = "project")
 @Entity
 public class Project {
+
+    // order status
+    public enum Status {
+        READY, //
+        IN_PROGRESS, //
+        PAUSED, //
+        COMPLETED, //
+        CANCELLED, //
+        CUSTOM //
+    }
+
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
@@ -35,9 +46,33 @@ public class Project {
     @Column(name = "estimation")
     private String estimation;
 
+    // version attribute name with underscore to make it return into the JSon representation
     @Version
-    @Column(name = "_version")
+    @Column(name = "version")
     private Long _version;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
+
+    @Column(name = "archived")
+    private Boolean archived;
+
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public Long getVersion() {
         return _version;
