@@ -14,11 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.NoSuchElementException;
 
+import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@WebMvcTest(ProjectController.class)
@@ -35,6 +38,35 @@ public class ProjectControllerSystemTests {
     @BeforeEach
     public void beforeEach() {
         repository.deleteAll();
+    }
+
+    @Test
+    public void getShouldNotReturnArchivedProjects() throws Exception {
+        var project1 = new Project();
+        project1.setName("name 1");
+        project1.setDescription("description 1");
+        project1.setOwner("dino");
+        project1.setBudget(15_000.0);
+        project1.setArchived(false);
+        var online = repository.save(project1);
+
+        var project2 = new Project();
+        project2.setName("name 2");
+        project2.setDescription("description 2");
+        project2.setOwner("dino 2");
+        project2.setBudget(25_000.0);
+        project2.setArchived(true);
+        var offline = repository.save(project2);
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/projects")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded").exists())
+                .andExpect(jsonPath("$._embedded.projects.length()").value(1))
+                .andExpect(jsonPath("$._embedded.projects[0].name").value("name 1"))
+                .andReturn();
+
     }
 
     @Test

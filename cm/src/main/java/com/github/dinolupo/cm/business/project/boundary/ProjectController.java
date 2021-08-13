@@ -3,6 +3,7 @@ package com.github.dinolupo.cm.business.project.boundary;
 import com.github.dinolupo.cm.business.project.entity.Project;
 import com.github.dinolupo.cm.business.project.entity.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -35,7 +36,10 @@ public class ProjectController {
     // page, size, and sort are available due to spring web support, they are converted into Pageable instance
     @GetMapping(path = "/projects")
     ResponseEntity<PagedModel<EntityModel<Project>>> all(Pageable pageable) {
-        return ResponseEntity.ok(pagedAssembler.toModel(repository.findAll(pageable), assembler));
+        var project = new Project();
+        project.setArchived(false);
+        var example = Example.of(project);
+        return ResponseEntity.ok(pagedAssembler.toModel(repository.findAll(example, pageable), assembler));
     }
 
     @PostMapping(path = "/projects")
