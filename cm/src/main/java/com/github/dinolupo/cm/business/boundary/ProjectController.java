@@ -1,19 +1,16 @@
-package com.github.dinolupo.cm.business.project.boundary;
+package com.github.dinolupo.cm.business.boundary;
 
-import com.github.dinolupo.cm.business.project.entity.Project;
-import com.github.dinolupo.cm.business.project.entity.ProjectRepository;
+import com.github.dinolupo.cm.business.boundary.exception.ProjectNotFoundException;
+import com.github.dinolupo.cm.business.entity.Project;
+import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.*;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +19,7 @@ import javax.persistence.OptimisticLockException;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/projects")
 public class ProjectController {
 
     @Autowired
@@ -34,15 +32,20 @@ public class ProjectController {
     private PagedResourcesAssembler<Project> pagedAssembler;
 
     // page, size, and sort are available due to spring web support, they are converted into Pageable instance
-    @GetMapping(path = "/projects")
-    ResponseEntity<PagedModel<EntityModel<Project>>> all(Pageable pageable) {
+    @GetMapping
+    ResponseEntity<PagedModel<EntityModel<Project>>> all() {
+        return filter(Pageable.unpaged());
+    }
+
+    @GetMapping(path = "/search")
+    ResponseEntity<PagedModel<EntityModel<Project>>> filter(Pageable pageable) {
         var project = new Project();
         project.setArchived(false);
         var example = Example.of(project);
         return ResponseEntity.ok(pagedAssembler.toModel(repository.findAll(example, pageable), assembler));
     }
 
-    @PostMapping(path = "/projects")
+    @PostMapping
     ResponseEntity<EntityModel<Project>> newElement(@RequestBody Project newProject) {
         if (newProject.getStatus() == null) {
             newProject.setStatus(Project.Status.READY);
@@ -53,7 +56,7 @@ public class ProjectController {
                 .body(entityModel);
     }
 
-    @PutMapping("/projects/{id}/archive")
+    @PutMapping("/{id}/archive")
     ResponseEntity<?> archive(@PathVariable Long id) {
         Optional<Project> optProject = repository.findById(id);
 
@@ -78,7 +81,7 @@ public class ProjectController {
                         .withDetail("You can't archive a Project that is in the " + project.getStatus() + " status"));
     }
 
-    @PutMapping("/projects/{id}/unarchive")
+    @PutMapping("/{id}/unarchive")
     ResponseEntity<?> unarchive(@PathVariable Long id) {
         Optional<Project> optProject = repository.findById(id);
 
@@ -103,13 +106,13 @@ public class ProjectController {
                         .withDetail("You can't unarchive a Project that is already online"));
     }
 
-    @GetMapping("/projects/{id}")
+    @GetMapping("/{id}")
     ResponseEntity<EntityModel<Project>> one(@PathVariable Long id) {
         return ResponseEntity.ok(assembler.toModel(repository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException(id))));
     }
 
-    @PutMapping("/projects/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<EntityModel<Project>> replace(@RequestBody Project newElement, @PathVariable Long id) {
 
         Optional<Project> optProject = repository.findById(id);
@@ -136,7 +139,7 @@ public class ProjectController {
 
     }
 
-    @DeleteMapping("/projects/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?> delete(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();

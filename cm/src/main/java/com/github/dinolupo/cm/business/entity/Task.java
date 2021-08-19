@@ -1,10 +1,13 @@
-package com.github.dinolupo.cm.business.project.entity;
+package com.github.dinolupo.cm.business.entity;
+
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Table(name = "task")
 @Entity
+@Relation(collectionRelation = "tasks", itemRelation = "task")
 public class Task {
     @Id
     @GeneratedValue(
@@ -28,6 +31,23 @@ public class Task {
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "project_id")
+    private Long projectId;
+
+    // version attribute name with underscore to make it return into the JSon representation
+    @Version
+    @Column(name = "version")
+    private Long _version;
+
+    public Long getVersion() {
+        return _version;
+    }
+    public void setVersion(Long version) { this._version = version; }
+
+    public Long getProjectId() { return projectId; }
+
+    public void setProjectId(Long projectId) { this.projectId = projectId; }
 
     public LocalDate getEndDate() {
         return endDate;

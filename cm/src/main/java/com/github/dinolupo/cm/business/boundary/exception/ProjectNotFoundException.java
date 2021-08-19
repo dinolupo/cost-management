@@ -1,4 +1,4 @@
-package com.github.dinolupo.cm.business.project.boundary;
+package com.github.dinolupo.cm.business.boundary.exception;
 
 public class ProjectNotFoundException extends RuntimeException {
 

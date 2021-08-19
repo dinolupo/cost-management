@@ -1,10 +1,13 @@
-package com.github.dinolupo.cm.business.project.entity;
+package com.github.dinolupo.cm.business.entity;
+
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Table(name = "project")
 @Entity
+@Relation(collectionRelation = "projects", itemRelation = "project")
 public class Project {
 
     // order status
@@ -16,6 +19,28 @@ public class Project {
         CANCELLED, //
         CUSTOM //
     }
+
+    public Project(String name,
+                   String description,
+                   Double budget,
+                   LocalDate startDate,
+                   LocalDate endDate,
+                   String owner,
+                   String estimation,
+                   Status status,
+                   Boolean archived) {
+        this.name = name;
+        this.description = description;
+        this.budget = budget;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.owner = owner;
+        this.estimation = estimation;
+        this.status = status;
+        this.archived = archived;
+    }
+
+    public Project() {}
 
     @Id
     @GeneratedValue(
@@ -77,6 +102,7 @@ public class Project {
     public Long getVersion() {
         return _version;
     }
+    public void setVersion(Long version) { this._version = version; }
 
     public String getEstimation() {
         return estimation;

@@ -1,32 +1,28 @@
 package com.github.dinolupo.cm;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dinolupo.cm.business.project.boundary.ProjectController;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import com.github.dinolupo.cm.business.project.entity.Project;
-import com.github.dinolupo.cm.business.project.entity.ProjectRepository;
+import com.github.dinolupo.cm.business.entity.Project;
+import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.NoSuchElementException;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@WebMvcTest(ProjectController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
 public class ProjectControllerSystemTests {
 
     @Autowired
@@ -36,7 +32,7 @@ public class ProjectControllerSystemTests {
     ProjectRepository repository;
 
     @BeforeEach
-    public void beforeEach() {
+    public void setUp() {
         repository.deleteAll();
     }
 
@@ -58,15 +54,14 @@ public class ProjectControllerSystemTests {
         project2.setArchived(true);
         var offline = repository.save(project2);
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/projects")
+        this.mockMvc.perform(get("/projects")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded").exists())
                 .andExpect(jsonPath("$._embedded.projects.length()").value(1))
-                .andExpect(jsonPath("$._embedded.projects[0].name").value("name 1"))
-                .andReturn();
-
+                .andExpect(jsonPath("$._embedded.projects[0].name").value("name 1"));
+                //.andDo(document("arch"));
     }
 
     @Test
@@ -91,6 +86,7 @@ public class ProjectControllerSystemTests {
         this.mockMvc.perform(put("/projects/"+saved.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(saved)))
+                .andDo(print())
                 .andExpect(status().isPreconditionFailed());
     }
 
@@ -104,6 +100,7 @@ public class ProjectControllerSystemTests {
         project = repository.save(project);
         assertThat(project.getStatus()).isEqualTo(Project.Status.CANCELLED);
         this.mockMvc.perform(put("/projects/" + project.getId() + "/archive"))
+                .andDo(print())
                 .andExpect(status().isOk());
 
         // cannot ARCHIVE IF READY
@@ -113,6 +110,7 @@ public class ProjectControllerSystemTests {
         project.setStatus(Project.Status.READY);
         project = repository.save(project);
         this.mockMvc.perform(put("/projects/" + project.getId() + "/archive"))
+                .andDo(print())
                 .andExpect(status().isMethodNotAllowed());
 
         // can ARCHIVE if COMPLETED
@@ -120,18 +118,30 @@ public class ProjectControllerSystemTests {
         project.setStatus(Project.Status.COMPLETED);
         project = repository.save(project);
         this.mockMvc.perform(put("/projects/" + project.getId() + "/archive"))
+                .andDo(print())
                 .andExpect(status().isOk());
 
         // test unarchive
         this.mockMvc.perform(put("/projects/" + project.getId() + "/unarchive"))
+                .andDo(print())
                 .andExpect(status().isOk());
 
         // cannot unarchive if already archived
         this.mockMvc.perform(put("/projects/" + project.getId() + "/unarchive"))
+                .andDo(print())
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE))
                 .andExpect(content().json("{\"title\":\"Method not allowed\",\"detail\":\"You can't unarchive a Project that is already online\"}"));
 
+    }
+
+    @Test
+    public void getAll() throws Exception {
+        this.mockMvc.perform(get("/projects")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("_links.self").isNotEmpty());
     }
 
     public static String asJsonString(final Object obj) {

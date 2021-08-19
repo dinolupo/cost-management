@@ -1,6 +1,6 @@
 package com.github.dinolupo.cm;
 
-import com.github.dinolupo.cm.business.project.boundary.ProjectController;
+import com.github.dinolupo.cm.business.boundary.ProjectController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

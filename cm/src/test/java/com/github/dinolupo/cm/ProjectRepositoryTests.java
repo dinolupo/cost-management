@@ -1,7 +1,7 @@
 package com.github.dinolupo.cm;
 
-import com.github.dinolupo.cm.business.project.entity.Project;
-import com.github.dinolupo.cm.business.project.entity.ProjectRepository;
+import com.github.dinolupo.cm.business.entity.Project;
+import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

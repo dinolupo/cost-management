@@ -29,3 +29,15 @@ https://howtodoinjava.com/spring-boot2/testing/spring-boot-mockmvc-example/
 > testing with spring
 
 https://spring.io/guides/gs/testing-web/
+
+> openapi vs asciidoc
+
+https://www.baeldung.com/spring-rest-docs-vs-openapi
+
+> Spring HAL Explorer include spring data rest (not wanted)
+> So we will include only libraries as static content
+
+https://stackoverflow.com/questions/40360425/using-hal-browser-with-spring-hateoas-without-spring-data-rest
+
+
+
