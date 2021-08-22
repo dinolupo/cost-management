@@ -1,4 +1,24 @@
-### LINKS
+# Cost Management
+
+Cost Management is a web application that I implemented to update my programming skills.
+
+**Backend**
+
+- Spring Boot
+- RestFul services with HATEOAS (level 3 Richardson maturity model)
+- Single Sign On with OpenID Connect providers (OAuth2)
+- Microprofiling (local user and roles on DB)
+- Stateless and JWT authentication/authorization
+- Spring Rest Docs with Asciidoc
+- ...
+
+**Webapp**
+
+- TBD
+
+## References
+
+I used the following resources:
 
 > great tutorial on REST with Spring
 
