@@ -19,7 +19,7 @@ import javax.persistence.OptimisticLockException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/api/projects")
 public class ProjectController {
 
     @Autowired

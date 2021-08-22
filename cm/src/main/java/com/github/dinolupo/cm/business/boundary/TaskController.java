@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.OptimisticLockException;
 
 @RestController
-@RequestMapping("/projects/{projectId}/tasks")
+@RequestMapping("/api/projects/{projectId}/tasks")
 public class TaskController {
 
     @Autowired

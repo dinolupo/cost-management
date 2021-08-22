@@ -5,34 +5,49 @@ import org.junit.jupiter.api.BeforeEach;
 import com.github.dinolupo.cm.business.entity.Project;
 import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+//import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureRestDocs
+@ExtendWith(SpringExtension.class)
 public class ProjectControllerSystemTests {
 
-    @Autowired
+    // if autowired, also the authentication is required before calling the method
+    //@Autowired
     private MockMvc mockMvc;
 
     @Autowired
     ProjectRepository repository;
 
+    @Autowired
+    private Environment env;
+
+    private String api;
+
     @BeforeEach
-    public void setUp() {
+    //public void setUp() {
+    public void setUp(WebApplicationContext webApplicationContext) {
+        api = env.getProperty("api.prefix");
+
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         repository.deleteAll();
     }
 
@@ -54,14 +69,13 @@ public class ProjectControllerSystemTests {
         project2.setArchived(true);
         var offline = repository.save(project2);
 
-        this.mockMvc.perform(get("/projects")
+        this.mockMvc.perform(get(api+"/projects")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded").exists())
                 .andExpect(jsonPath("$._embedded.projects.length()").value(1))
                 .andExpect(jsonPath("$._embedded.projects[0].name").value("name 1"));
-                //.andDo(document("arch"));
     }
 
     @Test
@@ -83,7 +97,7 @@ public class ProjectControllerSystemTests {
         assertThat(revisioned.getVersion()).isEqualTo(1);
 
         // PUT endpoint should raise exception if a client save again the first object
-        this.mockMvc.perform(put("/projects/"+saved.getId())
+        this.mockMvc.perform(put(api+"/projects/"+saved.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(saved)))
                 .andDo(print())
@@ -99,7 +113,7 @@ public class ProjectControllerSystemTests {
         project.setStatus(Project.Status.CANCELLED);
         project = repository.save(project);
         assertThat(project.getStatus()).isEqualTo(Project.Status.CANCELLED);
-        this.mockMvc.perform(put("/projects/" + project.getId() + "/archive"))
+        this.mockMvc.perform(put(api+"/projects/" + project.getId() + "/archive"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -109,7 +123,7 @@ public class ProjectControllerSystemTests {
         project.setArchived(false);
         project.setStatus(Project.Status.READY);
         project = repository.save(project);
-        this.mockMvc.perform(put("/projects/" + project.getId() + "/archive"))
+        this.mockMvc.perform(put(api+"/projects/" + project.getId() + "/archive"))
                 .andDo(print())
                 .andExpect(status().isMethodNotAllowed());
 
@@ -117,17 +131,17 @@ public class ProjectControllerSystemTests {
         project = repository.findById(project.getId()).orElseThrow(NoSuchElementException::new);
         project.setStatus(Project.Status.COMPLETED);
         project = repository.save(project);
-        this.mockMvc.perform(put("/projects/" + project.getId() + "/archive"))
+        this.mockMvc.perform(put(api+"/projects/" + project.getId() + "/archive"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         // test unarchive
-        this.mockMvc.perform(put("/projects/" + project.getId() + "/unarchive"))
+        this.mockMvc.perform(put(api+"/projects/" + project.getId() + "/unarchive"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         // cannot unarchive if already archived
-        this.mockMvc.perform(put("/projects/" + project.getId() + "/unarchive"))
+        this.mockMvc.perform(put(api+"/projects/" + project.getId() + "/unarchive"))
                 .andDo(print())
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE))
@@ -137,7 +151,7 @@ public class ProjectControllerSystemTests {
 
     @Test
     public void getAll() throws Exception {
-        this.mockMvc.perform(get("/projects")
+        this.mockMvc.perform(get(api+"/projects")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())

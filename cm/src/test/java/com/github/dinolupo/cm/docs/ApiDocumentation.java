@@ -3,13 +3,13 @@ package com.github.dinolupo.cm.docs;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dinolupo.cm.business.entity.Project;
 import com.github.dinolupo.cm.business.entity.ProjectRepository;
-import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -24,12 +24,9 @@ import javax.servlet.RequestDispatcher;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -57,9 +54,16 @@ public class ApiDocumentation {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private Environment env;
+
+    private String api;
+
     @BeforeEach
     public void setUp(WebApplicationContext webApplicationContext,
                       RestDocumentationContextProvider restDocumentation) {
+
+        api = env.getProperty("api.prefix");
 
         docHandler = document("{method-name}",
                 preprocessRequest(prettyPrint()),
@@ -74,7 +78,7 @@ public class ApiDocumentation {
     @Test
     public void headersExample() throws Exception {
         this.mockMvc
-                .perform(get("/projects"))
+                .perform(get(api+"/projects"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(docHandler.document(responseHeaders(
@@ -105,7 +109,7 @@ public class ApiDocumentation {
 
     @Test
     public void indexExample() throws Exception {
-        this.mockMvc.perform(get("/"))
+        this.mockMvc.perform(get(api+"/"))
                 .andExpect(status().isOk())
                 .andDo(docHandler.document(
                         links(
@@ -133,7 +137,7 @@ public class ApiDocumentation {
                     false);
         }
         this.mockMvc
-                .perform(get("/projects").accept(MediaTypes.HAL_JSON))
+                .perform(get(api+"/projects").accept(MediaTypes.HAL_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").isNotEmpty())
@@ -160,7 +164,7 @@ public class ApiDocumentation {
         //ConstrainedFields fields = new ConstrainedFields(Project.class);
 
         this.mockMvc
-                .perform(post("/projects")
+                .perform(post(api+"/projects")
                         .contentType(MediaTypes.HAL_JSON)
                         .content(this.objectMapper.writeValueAsString(project)))
                 .andExpect(

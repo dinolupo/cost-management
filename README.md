@@ -30,6 +30,9 @@ https://howtodoinjava.com/spring-boot2/testing/spring-boot-mockmvc-example/
 
 https://spring.io/guides/gs/testing-web/
 
+https://howtodoinjava.com/spring-boot2/testing/spring-boot-mockmvc-example/
+
+
 > openapi vs asciidoc
 
 https://www.baeldung.com/spring-rest-docs-vs-openapi
@@ -38,6 +41,19 @@ https://www.baeldung.com/spring-rest-docs-vs-openapi
 > So we will include only libraries as static content
 
 https://stackoverflow.com/questions/40360425/using-hal-browser-with-spring-hateoas-without-spring-data-rest
+
+> Prefix only in rest controller, check the not accepted question, it is better
+> I included the variable in the properties and referencing it in the controllers
+
+https://stackoverflow.com/questions/28006501/how-to-specify-prefix-for-all-controllers-in-spring-boot
+
+> Rest Docs
+
+https://docs.spring.io/spring-restdocs/docs/current/reference/html5/#configuration-snippet-template-format
+
+> Security and Testing
+
+https://developer.okta.com/blog/2021/05/19/spring-security-testing
 
 
 
