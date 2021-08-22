@@ -4,7 +4,7 @@
 
 https://spring.io/guides/tutorials/rest/
 
-> motivation about exposing Version for Optimistick lock into the representation
+> motivation about exposing Version for Optimistic lock into the representation
 > Not convinced by the Oliver's response, Johan is right because I need the version in
 > my collection GET API
 
@@ -32,7 +32,6 @@ https://spring.io/guides/gs/testing-web/
 
 https://howtodoinjava.com/spring-boot2/testing/spring-boot-mockmvc-example/
 
-
 > openapi vs asciidoc
 
 https://www.baeldung.com/spring-rest-docs-vs-openapi
@@ -54,6 +53,22 @@ https://docs.spring.io/spring-restdocs/docs/current/reference/html5/#configurati
 > Security and Testing
 
 https://developer.okta.com/blog/2021/05/19/spring-security-testing
+
+> Managing Google + HTTP Basic Authentication together
+
+https://www.codejava.net/frameworks/spring-boot/oauth2-login-with-google-example
+
+> video on Spring Security and JWT
+
+https://www.youtube.com/watch?v=VVn9OG9nfH0
+
+> Authentication STATELESS with JWT
+
+https://www.toptal.com/spring/spring-security-tutorial
+
+
+
+
 
 
 
