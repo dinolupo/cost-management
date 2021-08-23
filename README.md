@@ -2,9 +2,28 @@
 
 Cost Management is a web application that I implemented to update my programming skills.
 
-**Backend**
+## Directories
+> tree -L 1 -d
+```
+.
+├── docker      # dockerfile
+├── backend     # spring boot application
+└── webapp      # web frontend
+```
 
-- Spring Boot
+### docker
+
+Start local MariaDB for development with:
+
+```bash
+docker compose -f compose.yml up
+```
+
+### backend
+
+Backend developed with
+
+- Java 11 LTS + Spring Boot
 - RestFul services with HATEOAS (level 3 Richardson maturity model)
 - Single Sign On with OpenID Connect providers (OAuth2)
 - Microprofiling (local user and roles on DB)
@@ -12,7 +31,25 @@ Cost Management is a web application that I implemented to update my programming
 - Spring Rest Docs with Asciidoc
 - ...
 
-**Webapp**
+*Java/Maven versions with SDKMAN:*
+
+```bash
+$ sdk current
+
+Using:
+
+java: 11.0.10-zulu
+maven: 3.8.1
+```
+
+Debug with:
+
+```bash
+./mvnw spring-boot:run -Dagentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
+```
+
+
+### webapp
 
 - TBD
 
