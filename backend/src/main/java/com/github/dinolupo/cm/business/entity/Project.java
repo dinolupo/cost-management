@@ -1,13 +1,18 @@
 package com.github.dinolupo.cm.business.entity;
 
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Table(name = "project")
 @Entity
 @Relation(collectionRelation = "projects", itemRelation = "project")
+@Getter @Setter @ToString
+@AllArgsConstructor @NoArgsConstructor
 public class Project {
 
     // order status
@@ -20,27 +25,25 @@ public class Project {
         CUSTOM //
     }
 
-    public Project(String name,
-                   String description,
-                   Double budget,
-                   LocalDate startDate,
-                   LocalDate endDate,
-                   String owner,
-                   String estimation,
-                   Status status,
-                   Boolean archived) {
-        this.name = name;
-        this.description = description;
-        this.budget = budget;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.owner = owner;
-        this.estimation = estimation;
-        this.status = status;
-        this.archived = archived;
-    }
-
-    public Project() {}
+//    public Project(String name,
+//                   String description,
+//                   Double budget,
+//                   LocalDate startDate,
+//                   LocalDate endDate,
+//                   String owner,
+//                   String estimation,
+//                   Status status,
+//                   Boolean archived) {
+//        this.name = name;
+//        this.description = description;
+//        this.budget = budget;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
+//        this.owner = owner;
+//        this.estimation = estimation;
+//        this.status = status;
+//        this.archived = archived;
+//    }
 
     @Id
     @GeneratedValue(
@@ -74,6 +77,8 @@ public class Project {
     // version attribute name with underscore to make it return into the JSon representation
     @Version
     @Column(name = "version")
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Long _version;
 
     @Enumerated(EnumType.STRING)
@@ -83,89 +88,22 @@ public class Project {
     @Column(name = "archived")
     private Boolean archived;
 
-    public Boolean getArchived() {
-        return archived;
-    }
-
-    public void setArchived(Boolean archived) {
-        this.archived = archived;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
     public Long getVersion() {
         return _version;
     }
     public void setVersion(Long version) { this._version = version; }
 
-    public String getEstimation() {
-        return estimation;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Project project = (Project) o;
+
+        return Objects.equals(id, project.id);
     }
 
-    public void setEstimation(String estimation) {
-        this.estimation = estimation;
+    @Override
+    public int hashCode() {
+        return 1545761250;
     }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public Double getBudget() {
-        return budget;
-    }
-
-    public void setBudget(Double budget) {
-        this.budget = budget;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
 }

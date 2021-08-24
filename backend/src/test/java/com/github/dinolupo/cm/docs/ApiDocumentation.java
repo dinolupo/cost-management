@@ -202,8 +202,18 @@ public class ApiDocumentation {
                                String estimation,
                                Project.Status status,
                                Boolean archived) {
-        var project = new Project(name, description, budget, startDate, endDate, owner, estimation, status, archived);
+
+        var project = new Project(null,
+                name,
+                description,
+                budget,
+                startDate,
+                endDate,
+                owner,
+                estimation,
+                null,
+                status,
+                archived);
         repository.save(project);
     }
-
 }

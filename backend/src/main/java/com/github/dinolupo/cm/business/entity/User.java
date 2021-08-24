@@ -1,10 +1,16 @@
 package com.github.dinolupo.cm.business.entity;
 
+import lombok.*;
+import org.hibernate.Hibernate;
+
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Objects;
 
 @Table(name = "user")
 @Entity
+@Getter @Setter @ToString
+@AllArgsConstructor @NoArgsConstructor
 public class User {
 
     @Id
@@ -33,51 +39,17 @@ public class User {
     @Column(name = "disabled", nullable = false)
     private Boolean disabled = false;
 
-    public Boolean getDisabled() {
-        return disabled;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+
+        return Objects.equals(id, user.id);
     }
 
-    public void setDisabled(Boolean disabled) {
-        this.disabled = disabled;
-    }
-
-    public Collection<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Collection<Role> roles) {
-        this.roles = roles;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    public int hashCode() {
+        return 562048007;
     }
 }

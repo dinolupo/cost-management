@@ -1,13 +1,20 @@
 package com.github.dinolupo.cm.business.entity;
 
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Table(name = "task")
 @Entity
 @Relation(collectionRelation = "tasks", itemRelation = "task")
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor @NoArgsConstructor
 public class Task {
     @Id
     @GeneratedValue(
@@ -38,62 +45,25 @@ public class Task {
     // version attribute name with underscore to make it return into the JSon representation
     @Version
     @Column(name = "version")
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Long _version;
-
     public Long getVersion() {
         return _version;
     }
     public void setVersion(Long version) { this._version = version; }
 
-    public Long getProjectId() { return projectId; }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Task task = (Task) o;
 
-    public void setProjectId(Long projectId) { this.projectId = projectId; }
-
-    public LocalDate getEndDate() {
-        return endDate;
+        return Objects.equals(id, task.id);
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public Double getBudget() {
-        return budget;
-    }
-
-    public void setBudget(Double budget) {
-        this.budget = budget;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        return 1976597858;
     }
 }

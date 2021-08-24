@@ -1,9 +1,15 @@
 package com.github.dinolupo.cm.business.entity;
 
+import lombok.*;
+import org.hibernate.Hibernate;
+
 import javax.persistence.*;
+import java.util.Objects;
 
 @Table(name = "role")
 @Entity
+@Getter @Setter @ToString
+@AllArgsConstructor @NoArgsConstructor
 public class Role {
 
     @Id
@@ -17,23 +23,17 @@ public class Role {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public String getName() {
-        return name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Role role = (Role) o;
+
+        return Objects.equals(id, role.id);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public int hashCode() {
+        return 1179619963;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-
-
 }
