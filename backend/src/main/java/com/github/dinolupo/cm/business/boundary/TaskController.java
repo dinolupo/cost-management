@@ -1,7 +1,7 @@
 package com.github.dinolupo.cm.business.boundary;
 
-import com.github.dinolupo.cm.business.boundary.exception.ProjectNotFoundException;
-import com.github.dinolupo.cm.business.boundary.exception.TaskNotFoundException;
+import com.github.dinolupo.cm.business.boundary.exception.ElementNotFoundException;
+import com.github.dinolupo.cm.business.entity.Project;
 import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import com.github.dinolupo.cm.business.entity.Task;
 import com.github.dinolupo.cm.business.entity.TaskRepository;
@@ -50,13 +50,15 @@ public class TaskController {
         task.setId(id);
         var example = Example.of(task);
         return ResponseEntity.ok(assembler.toModel(
-                repository.findOne(example).orElseThrow(() -> new TaskNotFoundException(projectId, id))));
+                repository.findOne(example).orElseThrow(() ->
+                        new ElementNotFoundException(Project.class, projectId, Task.class, id))));
     }
 
     @PostMapping
     ResponseEntity<?> newElement(@PathVariable Long projectId, @RequestBody Task newTask) {
         projectRepository.findById(projectId).orElseThrow(
-                () -> new ProjectNotFoundException(projectId));
+                () -> new ElementNotFoundException(Project.class, projectId));
+
 
         newTask.setProjectId(projectId);
         var entityModel = assembler.toModel(repository.save(newTask));
@@ -70,7 +72,8 @@ public class TaskController {
         task.setProjectId(projectId);
         task.setId(id);
         var example = Example.of(task);
-        var current = repository.findOne(example).orElseThrow(() -> new TaskNotFoundException(projectId, id));
+        var current = repository.findOne(example).orElseThrow(() ->
+                new ElementNotFoundException(Project.class, projectId, Task.class, id));
 
         if (newElement.getVersion() == null || current.getVersion() != newElement.getVersion()) {
             String message = String.format("Version is null or different for task id=%d, current db version=%d, new version=%d"
@@ -88,7 +91,7 @@ public class TaskController {
     @DeleteMapping
     ResponseEntity<?> delete(@PathVariable Long projectId, @PathVariable Long id) {
         projectRepository.findById(projectId).orElseThrow(
-                () -> new ProjectNotFoundException(projectId));
+                () -> new ElementNotFoundException(Project.class, projectId));
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

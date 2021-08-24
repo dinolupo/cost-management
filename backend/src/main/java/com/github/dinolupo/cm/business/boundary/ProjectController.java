@@ -1,6 +1,6 @@
 package com.github.dinolupo.cm.business.boundary;
 
-import com.github.dinolupo.cm.business.boundary.exception.ProjectNotFoundException;
+import com.github.dinolupo.cm.business.boundary.exception.ElementNotFoundException;
 import com.github.dinolupo.cm.business.entity.Project;
 import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +109,7 @@ public class ProjectController {
     @GetMapping("/{id}")
     ResponseEntity<EntityModel<Project>> one(@PathVariable Long id) {
         return ResponseEntity.ok(assembler.toModel(repository.findById(id)
-                .orElseThrow(() -> new ProjectNotFoundException(id))));
+                .orElseThrow(() -> new ElementNotFoundException(Project.class, id))));
     }
 
     @PutMapping("/{id}")
