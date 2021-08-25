@@ -25,26 +25,6 @@ public class Project {
         CUSTOM //
     }
 
-//    public Project(String name,
-//                   String description,
-//                   Double budget,
-//                   LocalDate startDate,
-//                   LocalDate endDate,
-//                   String owner,
-//                   String estimation,
-//                   Status status,
-//                   Boolean archived) {
-//        this.name = name;
-//        this.description = description;
-//        this.budget = budget;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.owner = owner;
-//        this.estimation = estimation;
-//        this.status = status;
-//        this.archived = archived;
-//    }
-
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
