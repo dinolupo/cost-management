@@ -123,6 +123,14 @@ https://www.youtube.com/watch?v=VVn9OG9nfH0
 
 https://www.toptal.com/spring/spring-security-tutorial
 
+> Spring Security, how it should be, with spring examples
+
+https://blog.jdriven.com/2019/10/spring-security-5-2-oauth-2-exploration-part1/
+
+https://blog.jdriven.com/2019/10/spring-security-5-2-oauth-2-exploration-part2/
+
+
+
 
 
 

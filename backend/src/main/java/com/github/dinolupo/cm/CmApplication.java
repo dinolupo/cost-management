@@ -32,10 +32,9 @@ public class CmApplication {
 		loggingFilter.setIncludeClientInfo(true);
 		loggingFilter.setIncludeQueryString(true);
 		loggingFilter.setIncludePayload(true);
-		loggingFilter.setIncludeHeaders(false);
+		loggingFilter.setIncludeHeaders(true);
 		return loggingFilter;
 	}
-
 
 	@Bean
 	CommandLineRunner run (RoleRepository roleRepo,
@@ -51,9 +50,9 @@ public class CmApplication {
 			roleRepo.save(new Role(null, "ADMIN"));
 			roleRepo.save(new Role(null, "SUPER_ADMIN"));
 			roleRepo.save(new Role(null, "MANAGER"));
-			userRepo.save(new User(null,"dino", passwordEncoder().encode("123456"), "Dino", new ArrayList<>(),false));
-			userRepo.save(new User(null,"luca", passwordEncoder().encode("123456"),"Luca", new ArrayList<>(),false));
-			userRepo.save(new User(null,"fabio", passwordEncoder().encode("123456"),"Fabio", new ArrayList<>(),false));
+			service.save(new User(null,"dino","123456", "Dino", new ArrayList<>(),false));
+			service.save(new User(null,"luca", "123456","Luca", new ArrayList<>(),false));
+			service.save(new User(null,"fabio","123456","Fabio", new ArrayList<>(),false));
 			service.addRoleToUser("dino", "SUPER_ADMIN");
 			service.addRoleToUser("dino", "ADMIN");
 			service.addRoleToUser("dino", "USER");
