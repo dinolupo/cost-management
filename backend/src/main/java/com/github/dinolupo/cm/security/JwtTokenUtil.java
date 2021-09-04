@@ -52,12 +52,17 @@ public class JwtTokenUtil {
     }
 
     public boolean validate(String token) {
-        //TODO: to be implemented
         var algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
         var verifier = JWT.require(algorithm).build();
         try {
             var decodedJWT = verifier.verify(token);
-            return true;
+            if (decodedJWT.getClaim("roles").isNull()) {
+                // maybe it is the refresh token instead of the authorization? returning false
+                return false;
+            } else {
+                // token valid, it contains roles claim
+                return true;
+            }
         } catch (JWTVerificationException exception) {
             // decoding failed
             return false;
