@@ -1,4 +1,4 @@
-package com.github.dinolupo.cm.business.entity;
+package com.github.dinolupo.cm.security.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;

@@ -1,13 +1,7 @@
 package com.github.dinolupo.cm.security;
 
-import com.github.dinolupo.cm.business.control.UserService;
-import com.github.dinolupo.cm.business.entity.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -45,9 +39,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
 
         // Get user identity and set it on the spring security context
-        var authToken = jwtTokenUtil.geAuthenticationToken(token);
+        var authToken = jwtTokenUtil.geAuthenticationTokenFromAccessToken(token);
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
         chain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        var requestURL = request.getRequestURI();
+        return "/login".equals(requestURL) || "/refreshtoken".equals(requestURL);
     }
 }

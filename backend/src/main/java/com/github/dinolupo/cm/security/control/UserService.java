@@ -1,10 +1,10 @@
-package com.github.dinolupo.cm.business.control;
+package com.github.dinolupo.cm.security.control;
 
-import com.github.dinolupo.cm.business.boundary.exception.ElementNotFoundException;
-import com.github.dinolupo.cm.business.entity.Role;
-import com.github.dinolupo.cm.business.entity.RoleRepository;
-import com.github.dinolupo.cm.business.entity.User;
-import com.github.dinolupo.cm.business.entity.UserRepository;
+import com.github.dinolupo.cm.exception.ElementNotFoundException;
+import com.github.dinolupo.cm.security.entity.Role;
+import com.github.dinolupo.cm.security.entity.RoleRepository;
+import com.github.dinolupo.cm.security.entity.User;
+import com.github.dinolupo.cm.security.entity.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,5 @@
-package com.github.dinolupo.cm.business.entity;
+package com.github.dinolupo.cm.security.entity;
 
-import com.github.dinolupo.cm.business.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

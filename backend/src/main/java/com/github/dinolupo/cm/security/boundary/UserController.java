@@ -1,10 +1,10 @@
-package com.github.dinolupo.cm.business.boundary;
+package com.github.dinolupo.cm.security.boundary;
 
-import com.github.dinolupo.cm.business.boundary.exception.ElementNotFoundException;
-import com.github.dinolupo.cm.business.control.UserService;
-import com.github.dinolupo.cm.business.entity.Role;
-import com.github.dinolupo.cm.business.entity.UserRepository;
-import com.github.dinolupo.cm.business.entity.User;
+import com.github.dinolupo.cm.exception.ElementNotFoundException;
+import com.github.dinolupo.cm.security.control.UserService;
+import com.github.dinolupo.cm.security.entity.Role;
+import com.github.dinolupo.cm.security.entity.UserRepository;
+import com.github.dinolupo.cm.security.entity.User;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;

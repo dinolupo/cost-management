@@ -1,13 +1,15 @@
 package com.github.dinolupo.cm;
 
-import com.github.dinolupo.cm.business.control.UserService;
+import com.github.dinolupo.cm.security.control.UserService;
 import com.github.dinolupo.cm.business.entity.*;
-import lombok.RequiredArgsConstructor;
+import com.github.dinolupo.cm.security.entity.Role;
+import com.github.dinolupo.cm.security.entity.RoleRepository;
+import com.github.dinolupo.cm.security.entity.User;
+import com.github.dinolupo.cm.security.entity.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
