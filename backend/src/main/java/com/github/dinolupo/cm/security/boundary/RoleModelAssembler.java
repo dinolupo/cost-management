@@ -1,6 +1,6 @@
-package com.github.dinolupo.cm.business.boundary;
+package com.github.dinolupo.cm.security.boundary;
 
-import com.github.dinolupo.cm.business.entity.Role;
+import com.github.dinolupo.cm.security.entity.Role;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 

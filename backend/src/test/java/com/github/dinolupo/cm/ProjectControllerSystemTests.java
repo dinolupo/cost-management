@@ -12,15 +12,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.NestedServletException;
 
+import javax.persistence.OptimisticLockException;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 //import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -97,11 +102,13 @@ public class ProjectControllerSystemTests {
         assertThat(revisioned.getVersion()).isEqualTo(1);
 
         // PUT endpoint should raise exception if a client save again the first object
-        this.mockMvc.perform(put(api+"/projects/"+saved.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(saved)))
-                .andDo(print())
-                .andExpect(status().isPreconditionFailed());
+        assertThatThrownBy(() -> {
+        this.mockMvc.perform(put(api + "/projects/" + saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(saved)))
+                .andDo(print());
+        }).isInstanceOf(NestedServletException.class);
+                //.andExpect(status().isPreconditionFailed())
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.github.dinolupo.cm.business.boundary;
 
-import com.github.dinolupo.cm.business.boundary.exception.ElementNotFoundException;
+import com.github.dinolupo.cm.exception.ElementNotFoundException;
 import com.github.dinolupo.cm.business.entity.Project;
 import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +51,7 @@ public class ProjectController {
             newProject.setStatus(Project.Status.READY);
         }
         newProject.setArchived(false);
+        newProject.setVersion(null);
         var entityModel = assembler.toModel(repository.save(newProject));
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);

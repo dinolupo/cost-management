@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -22,8 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    //private final JwtTokenFilter jwtTokenFilter;
-
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -40,25 +40,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // set permissions on endpoints
         http.authorizeRequests()
-                // private endpoints: path /api/** should be only accessed if authenticated
-                .antMatchers("/api/**")
-                .authenticated()
 
-                // public endpoints
-                .anyRequest()
-                .permitAll();
+                // private endpoints
+                .antMatchers("/api/**").authenticated()
 
+                // public endpoint
+                .anyRequest().permitAll();
 
         // authentication types
-        http
-                .formLogin().permitAll()
-                .and().httpBasic();
+//        http.formLogin().permitAll()
+//                .and().httpBasic();
         //.and().oauth2Login();
 
-        // add JWT token filter
-        http.addFilter(new JWTAuthenticationFilter(authenticationManagerBean()));
-
+        // add JWT token filters
+        http.addFilter(new JWTAuthenticationFilter(authenticationManagerBean(), jwtTokenUtil));
+        http.addFilterBefore(new JWTAuthorizationFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
     }
+
+//    // TODO: make secret dynamic and secure
+//    @Bean
+//    public JwtTokenUtil jwtTokenUtilBean() {
+//        return new JwtTokenUtil();
+//    }
 
     // this is needed to be injected in the JWTAuthenticationFilter constructor
     @Bean
@@ -80,6 +83,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
 
 }

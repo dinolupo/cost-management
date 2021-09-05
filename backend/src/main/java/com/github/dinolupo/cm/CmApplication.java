@@ -1,13 +1,15 @@
 package com.github.dinolupo.cm;
 
-import com.github.dinolupo.cm.business.control.UserService;
+import com.github.dinolupo.cm.security.control.UserService;
 import com.github.dinolupo.cm.business.entity.*;
-import lombok.RequiredArgsConstructor;
+import com.github.dinolupo.cm.security.entity.Role;
+import com.github.dinolupo.cm.security.entity.RoleRepository;
+import com.github.dinolupo.cm.security.entity.User;
+import com.github.dinolupo.cm.security.entity.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
@@ -46,18 +48,18 @@ public class CmApplication {
 			userRepo.deleteAll();
 			roleRepo.deleteAll();
 
-			roleRepo.save(new Role(null, "USER"));
-			roleRepo.save(new Role(null, "ADMIN"));
-			roleRepo.save(new Role(null, "SUPER_ADMIN"));
-			roleRepo.save(new Role(null, "MANAGER"));
+			roleRepo.save(new Role(null, "ROLE_USER"));
+			roleRepo.save(new Role(null, "ROLE_ADMIN"));
+			roleRepo.save(new Role(null, "ROLE_SUPER_ADMIN"));
+			roleRepo.save(new Role(null, "ROLE_PROJECT_MANAGER"));
 			service.save(new User(null,"dino","123456", "Dino", new ArrayList<>(),false));
 			service.save(new User(null,"luca", "123456","Luca", new ArrayList<>(),false));
 			service.save(new User(null,"fabio","123456","Fabio", new ArrayList<>(),false));
-			service.addRoleToUser("dino", "SUPER_ADMIN");
-			service.addRoleToUser("dino", "ADMIN");
-			service.addRoleToUser("dino", "USER");
-			service.addRoleToUser("luca", "ADMIN");
-			service.addRoleToUser("fabio", "MANAGER");
+			service.addRoleToUser("dino", "ROLE_SUPER_ADMIN");
+			service.addRoleToUser("dino", "ROLE_ADMIN");
+			service.addRoleToUser("dino", "ROLE_USER");
+			service.addRoleToUser("luca", "ROLE_ADMIN");
+			service.addRoleToUser("fabio", "ROLE_PROJECT_MANAGER");
 
 			projRepo.deleteAll();
 			taskRepo.deleteAll();
@@ -78,7 +80,6 @@ public class CmApplication {
 			taskRepo.save(new Task(null, "Implementation", null, 138_500.0, LocalDate.now(), LocalDate.now().plusMonths(8), p3.getId(), null));
 			taskRepo.save(new Task(null, "Test", null, 328_500.0, LocalDate.now(), LocalDate.now().plusMonths(8), p3.getId(), null));
 			taskRepo.save(new Task(null, "Operation", null, 577_500.0, LocalDate.now(), LocalDate.now().plusMonths(8), p3.getId(), null));
-
 
 		};
 	}

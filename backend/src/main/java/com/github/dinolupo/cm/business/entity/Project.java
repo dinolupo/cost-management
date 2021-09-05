@@ -13,7 +13,7 @@ import java.util.Objects;
 @Relation(collectionRelation = "projects", itemRelation = "project")
 @Getter @Setter @ToString
 @AllArgsConstructor @NoArgsConstructor
-public class Project {
+public class  Project {
 
     // order status
     public enum Status {

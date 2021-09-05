@@ -1,6 +1,6 @@
 package com.github.dinolupo.cm.business.boundary;
 
-import com.github.dinolupo.cm.business.boundary.exception.ElementNotFoundException;
+import com.github.dinolupo.cm.exception.ElementNotFoundException;
 import com.github.dinolupo.cm.business.entity.Project;
 import com.github.dinolupo.cm.business.entity.ProjectRepository;
 import com.github.dinolupo.cm.business.entity.Task;

@@ -1,6 +1,9 @@
 package com.github.dinolupo.cm;
 
 import com.github.dinolupo.cm.business.entity.*;
+import com.github.dinolupo.cm.security.entity.RoleRepository;
+import com.github.dinolupo.cm.security.entity.User;
+import com.github.dinolupo.cm.security.entity.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
